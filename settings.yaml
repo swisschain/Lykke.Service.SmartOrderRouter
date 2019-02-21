@@ -1,0 +1,24 @@
+SmartOrderRouterService:
+  Db:
+    DataConnectionString:
+      settings-key: SmartOrderRouterService-DataConnectionString
+      types:
+        - AzureTableStorage
+
+    LogsConnectionString:
+      settings-key: SmartOrderRouterService-LogsConnectionString
+      types:
+        - AzureTableStorage
+
+SlackNotifications:
+  AzureQueue:
+    ConnectionString:
+      settings-key: SlackNotificationsConnString
+      types:
+        - AzureTableStorage
+    QueueName:
+      settings-key: SlackQueueName
+
+MonitoringServiceClient:
+  MonitoringServiceUrl:
+    settings-key: MonitoringServiceUrl
