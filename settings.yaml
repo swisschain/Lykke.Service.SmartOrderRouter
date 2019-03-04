@@ -1,4 +1,8 @@
 SmartOrderRouterService:
+
+  Name:
+    settings-key: SmartOrderRouterService-Name
+
   Db:
     DataConnectionString:
       settings-key: SmartOrderRouterService-DataConnectionString
@@ -9,6 +13,28 @@ SmartOrderRouterService:
       settings-key: SmartOrderRouterService-LogsConnectionString
       types:
         - AzureTableStorage
+  Rabbit:
+    Subscribers:
+      OrderBooks:
+        ConnectionString:
+          settings-key: RawPriceRabbitMq
+          types:
+            - RabbitMq
+        Exchanges:
+          settings-key: SmartOrderRouterService-Rabbit-Subscribers-OrderBooks-Exchanges
+          types:
+            - JsonArray
+        Queue:
+          settings-key: SmartOrderRouterService-Rabbit-Subscribers-OrderBooks
+          
+  ExchangeAdapters:
+    settings-key: SmartOrderRouterService-ExchangeAdapters
+    types:
+      - JsonArray
+
+MarketInstrumentsServiceClient:
+  ServiceUrl:
+    settings-key: MarketInstrumentsServiceUrl
 
 SlackNotifications:
   AzureQueue:
