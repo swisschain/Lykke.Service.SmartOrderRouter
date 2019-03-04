@@ -24,8 +24,8 @@ SmartOrderRouterService:
           settings-key: SmartOrderRouterService-Rabbit-Subscribers-OrderBooks-Exchanges
           types:
             - JsonArray
-        Queue:
-          settings-key: SmartOrderRouterService-Rabbit-Subscribers-OrderBooks
+        QueueSuffix:
+          settings-key: SmartOrderRouterService-Rabbit-Subscribers-OrderBooks-QueueSuffix
           
   ExchangeAdapters:
     settings-key: SmartOrderRouterService-ExchangeAdapters
