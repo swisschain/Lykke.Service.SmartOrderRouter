@@ -36,5 +36,10 @@ namespace Lykke.Service.SmartOrderRouter.Client.Models.Exchanges
         /// The fee in bps of transaction on exchange.
         /// </summary>
         public decimal TransactionFee { get; set; }
+
+        /// <summary>
+        /// The markup for reducing order slippage while trading.  
+        /// </summary>
+        public decimal SlippageMarkup { get; set; }
     }
 }

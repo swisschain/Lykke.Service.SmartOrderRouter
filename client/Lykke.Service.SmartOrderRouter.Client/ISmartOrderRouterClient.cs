@@ -20,14 +20,14 @@ namespace Lykke.Service.SmartOrderRouter.Client
         IExchangesApi Exchanges { get; set; }
 
         /// <summary>
+        /// External limit orders API.
+        /// </summary>
+        IExternalLimitOrdersApi ExternalLimitOrders { get; set; }
+
+        /// <summary>
         /// Market orders API.
         /// </summary>
         IMarketOrdersApi MarketOrders { get; set; }
-
-        /// <summary>
-        /// Market trades API.
-        /// </summary>
-        IMarketTradesApi MarketTrades { get; set; }
 
         /// <summary>
         /// Order books API.
@@ -38,5 +38,10 @@ namespace Lykke.Service.SmartOrderRouter.Client
         /// Quotes API.
         /// </summary>
         IQuotesApi Quotes { get; set; }
+
+        /// <summary>
+        /// Settings API.
+        /// </summary>
+        ISettingsApi Settings { get; set; }
     }
 }

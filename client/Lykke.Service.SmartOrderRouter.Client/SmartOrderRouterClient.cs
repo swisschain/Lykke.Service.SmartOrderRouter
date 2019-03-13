@@ -13,10 +13,11 @@ namespace Lykke.Service.SmartOrderRouter.Client
         {
             Balances = httpClientGenerator.Generate<IBalancesApi>();
             Exchanges = httpClientGenerator.Generate<IExchangesApi>();
+            ExternalLimitOrders = httpClientGenerator.Generate<IExternalLimitOrdersApi>();
             MarketOrders = httpClientGenerator.Generate<IMarketOrdersApi>();
-            MarketTrades = httpClientGenerator.Generate<IMarketTradesApi>();
             OrderBooks = httpClientGenerator.Generate<IOrderBooksApi>();
             Quotes = httpClientGenerator.Generate<IQuotesApi>();
+            Settings = httpClientGenerator.Generate<ISettingsApi>();
         }
 
         /// <inheritdoc/>
@@ -26,15 +27,18 @@ namespace Lykke.Service.SmartOrderRouter.Client
         public IExchangesApi Exchanges { get; set; }
 
         /// <inheritdoc/>
-        public IMarketOrdersApi MarketOrders { get; set; }
+        public IExternalLimitOrdersApi ExternalLimitOrders { get; set; }
 
         /// <inheritdoc/>
-        public IMarketTradesApi MarketTrades { get; set; }
+        public IMarketOrdersApi MarketOrders { get; set; }
 
         /// <inheritdoc/>
         public IOrderBooksApi OrderBooks { get; set; }
 
         /// <inheritdoc/>
         public IQuotesApi Quotes { get; set; }
+
+        /// <inheritdoc/>
+        public ISettingsApi Settings { get; set; }
     }
 }

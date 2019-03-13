@@ -37,11 +37,6 @@ namespace Lykke.Service.SmartOrderRouter.Client.Models.MarketOrders
         public decimal Volume { get; set; }
 
         /// <summary>
-        /// The order executed price.
-        /// </summary>
-        public decimal ExecutedPrice { get; set; }
-
-        /// <summary>
         /// Indicates the order status.
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]

@@ -12,6 +12,6 @@ namespace Lykke.Service.SmartOrderRouter.Client.Models.OrderBooks
         /// <summary>
         /// A collection of volumes on exchange on price level.
         /// </summary>
-        public IReadOnlyDictionary<string, decimal> ExchangeVolumes { get; set; }
+        public IReadOnlyList<AggregatedOrderBookVolumeModel> ExchangeVolumes { get; set; }
     }
 }

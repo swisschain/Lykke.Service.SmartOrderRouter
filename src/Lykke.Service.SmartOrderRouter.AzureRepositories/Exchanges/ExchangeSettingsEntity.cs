@@ -14,6 +14,7 @@ namespace Lykke.Service.SmartOrderRouter.AzureRepositories.Exchanges
         private ExchangeStatus _status;
         private decimal _marketFee;
         private decimal _transactionFee;
+        private decimal _slippageMarkup;
 
         public ExchangeSettingsEntity()
         {
@@ -64,6 +65,19 @@ namespace Lykke.Service.SmartOrderRouter.AzureRepositories.Exchanges
                 if (_transactionFee != value)
                 {
                     _transactionFee = value;
+                    MarkValueTypePropertyAsDirty();
+                }
+            }
+        }
+
+        public decimal SlippageMarkup
+        {
+            get => _slippageMarkup;
+            set
+            {
+                if (_slippageMarkup != value)
+                {
+                    _slippageMarkup = value;
                     MarkValueTypePropertyAsDirty();
                 }
             }

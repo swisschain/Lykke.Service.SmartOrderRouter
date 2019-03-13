@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lykke.Service.SmartOrderRouter.DomainServices
+namespace Lykke.Service.SmartOrderRouter.DomainServices.Cache
 {
     internal sealed class InMemoryCache<T> where T : class
     {

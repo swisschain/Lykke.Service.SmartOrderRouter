@@ -7,6 +7,7 @@ using Lykke.Service.SmartOrderRouter.Domain.Entities.Exchanges;
 using Lykke.Service.SmartOrderRouter.Domain.Exceptions;
 using Lykke.Service.SmartOrderRouter.Domain.Repositories;
 using Lykke.Service.SmartOrderRouter.Domain.Services;
+using Lykke.Service.SmartOrderRouter.DomainServices.Cache;
 using Lykke.Service.SmartOrderRouter.DomainServices.Extensions;
 
 namespace Lykke.Service.SmartOrderRouter.DomainServices.Exchanges

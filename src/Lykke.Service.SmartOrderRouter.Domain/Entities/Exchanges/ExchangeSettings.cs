@@ -43,6 +43,11 @@ namespace Lykke.Service.SmartOrderRouter.Domain.Entities.Exchanges
         /// </summary>
         public decimal TransactionFee { get; set; }
 
+        /// <summary>
+        /// The markup for reducing order slippage while trading.  
+        /// </summary>
+        public decimal SlippageMarkup { get; set; }
+
         public ExchangeSettings Clone()
         {
             return new ExchangeSettings
@@ -51,7 +56,8 @@ namespace Lykke.Service.SmartOrderRouter.Domain.Entities.Exchanges
                 Status = Status,
                 Instruments = Instruments,
                 MarketFee = MarketFee,
-                TransactionFee = TransactionFee
+                TransactionFee = TransactionFee,
+                SlippageMarkup = SlippageMarkup
             };
         }
     }

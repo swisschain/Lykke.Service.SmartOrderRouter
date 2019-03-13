@@ -19,6 +19,11 @@ namespace Lykke.Service.SmartOrderRouter.Client.Models.MarketOrders
         New,
 
         /// <summary>
+        /// Indicates that the market order is in progress.
+        /// </summary>
+        Active,
+        
+        /// <summary>
         /// Indicates that the market order executed.
         /// </summary>
         Filled,

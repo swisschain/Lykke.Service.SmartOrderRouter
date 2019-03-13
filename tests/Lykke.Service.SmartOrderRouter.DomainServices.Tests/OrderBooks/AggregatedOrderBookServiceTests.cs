@@ -66,15 +66,15 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.Tests.OrderBooks
                     Timestamp = DateTime.UtcNow,
                     SellLevels = new List<ExternalOrderBookLevel>
                     {
-                        new ExternalOrderBookLevel {Price = 1.8762345m, Volume = 1},
-                        new ExternalOrderBookLevel {Price = 2.1341931m, Volume = 2},
-                        new ExternalOrderBookLevel {Price = 3.9626635m, Volume = 3}
+                        new ExternalOrderBookLevel {Price = 1.8762345m, Volume = 1, OriginalPrice = 1.8762345m},
+                        new ExternalOrderBookLevel {Price = 2.1341931m, Volume = 2, OriginalPrice = 2.1341931m},
+                        new ExternalOrderBookLevel {Price = 3.9626635m, Volume = 3, OriginalPrice = 3.9626635m}
                     },
                     BuyLevels = new List<ExternalOrderBookLevel>
                     {
-                        new ExternalOrderBookLevel {Price = 1.5761689m, Volume = 1},
-                        new ExternalOrderBookLevel {Price = 1.0341931m, Volume = 2},
-                        new ExternalOrderBookLevel {Price = 0.5626635m, Volume = 3}
+                        new ExternalOrderBookLevel {Price = 1.5761689m, Volume = 1, OriginalPrice = 1.5761689m},
+                        new ExternalOrderBookLevel {Price = 1.0341931m, Volume = 2, OriginalPrice = 1.0341931m},
+                        new ExternalOrderBookLevel {Price = 0.5626635m, Volume = 3, OriginalPrice = 0.5626635m}
                     }
                 },
                 new ExternalOrderBook
@@ -84,15 +84,15 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.Tests.OrderBooks
                     Timestamp = DateTime.UtcNow,
                     SellLevels = new List<ExternalOrderBookLevel>
                     {
-                        new ExternalOrderBookLevel {Price = 1.877m, Volume = 1},
-                        new ExternalOrderBookLevel {Price = 2.136m, Volume = 2},
-                        new ExternalOrderBookLevel {Price = 3.963m, Volume = 3}
+                        new ExternalOrderBookLevel {Price = 1.877m, Volume = 1, OriginalPrice = 1.877m},
+                        new ExternalOrderBookLevel {Price = 2.136m, Volume = 2, OriginalPrice = 2.136m},
+                        new ExternalOrderBookLevel {Price = 3.963m, Volume = 3, OriginalPrice = 3.963m}
                     },
                     BuyLevels = new List<ExternalOrderBookLevel>
                     {
-                        new ExternalOrderBookLevel {Price = 1.576m, Volume = 1},
-                        new ExternalOrderBookLevel {Price = 1.035m, Volume = 2},
-                        new ExternalOrderBookLevel {Price = 0.562m, Volume = 3}
+                        new ExternalOrderBookLevel {Price = 1.576m, Volume = 1, OriginalPrice = 1.576m},
+                        new ExternalOrderBookLevel {Price = 1.035m, Volume = 2, OriginalPrice = 1.035m},
+                        new ExternalOrderBookLevel {Price = 0.562m, Volume = 3, OriginalPrice = 0.562m}
                     }
                 }
             });
@@ -105,32 +105,32 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.Tests.OrderBooks
                 {
                     new AggregatedOrderBookLevel
                     {
-                        Price = 1.877m, Volume = 2, ExchangeVolumes = new Dictionary<string, decimal>
+                        Price = 1.877m, Volume = 2, ExchangeVolumes = new List<AggregatedOrderBookVolume>
                         {
-                            ["Exchange1"] = 1,
-                            ["Exchange2"] = 1
+                            new AggregatedOrderBookVolume {Exchange = "Exchange1", Price = 1.8762345m, Volume = 1},
+                            new AggregatedOrderBookVolume {Exchange = "Exchange2", Price = 1.877m, Volume = 1}
                         }
                     },
                     new AggregatedOrderBookLevel
                     {
-                        Price = 2.135m, Volume = 2, ExchangeVolumes = new Dictionary<string, decimal>
+                        Price = 2.135m, Volume = 2, ExchangeVolumes = new List<AggregatedOrderBookVolume>
                         {
-                            ["Exchange1"] = 2
+                            new AggregatedOrderBookVolume {Exchange = "Exchange1", Price = 2.1341931m, Volume = 2}
                         }
                     },
                     new AggregatedOrderBookLevel
                     {
-                        Price = 2.136m, Volume = 2, ExchangeVolumes = new Dictionary<string, decimal>
+                        Price = 2.136m, Volume = 2, ExchangeVolumes = new List<AggregatedOrderBookVolume>
                         {
-                            ["Exchange2"] = 2
+                            new AggregatedOrderBookVolume {Exchange = "Exchange2", Price = 2.136m, Volume = 2}
                         }
                     },
                     new AggregatedOrderBookLevel
                     {
-                        Price = 3.963m, Volume = 6, ExchangeVolumes = new Dictionary<string, decimal>
+                        Price = 3.963m, Volume = 6, ExchangeVolumes = new List<AggregatedOrderBookVolume>
                         {
-                            ["Exchange1"] = 3,
-                            ["Exchange2"] = 3
+                            new AggregatedOrderBookVolume {Exchange = "Exchange1", Price = 3.9626635m, Volume = 3},
+                            new AggregatedOrderBookVolume {Exchange = "Exchange2", Price = 3.963m, Volume = 3}
                         }
                     }
                 },
@@ -138,32 +138,32 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.Tests.OrderBooks
                 {
                     new AggregatedOrderBookLevel
                     {
-                        Price = 1.576m, Volume = 2, ExchangeVolumes = new Dictionary<string, decimal>
+                        Price = 1.576m, Volume = 2, ExchangeVolumes = new List<AggregatedOrderBookVolume>
                         {
-                            ["Exchange1"] = 1,
-                            ["Exchange2"] = 1
+                            new AggregatedOrderBookVolume {Exchange = "Exchange1", Price = 1.5761689m, Volume = 1},
+                            new AggregatedOrderBookVolume {Exchange = "Exchange2", Price = 1.576m, Volume = 1}
                         }
                     },
                     new AggregatedOrderBookLevel
                     {
-                        Price = 1.034m, Volume = 2, ExchangeVolumes = new Dictionary<string, decimal>
+                        Price = 1.034m, Volume = 2, ExchangeVolumes = new List<AggregatedOrderBookVolume>
                         {
-                            ["Exchange1"] = 2
+                            new AggregatedOrderBookVolume {Exchange = "Exchange1", Price = 1.0341931m, Volume = 2}
                         }
                     },
                     new AggregatedOrderBookLevel
                     {
-                        Price = 1.035m, Volume = 2, ExchangeVolumes = new Dictionary<string, decimal>
+                        Price = 1.035m, Volume = 2, ExchangeVolumes = new List<AggregatedOrderBookVolume>
                         {
-                            ["Exchange2"] = 2
+                            new AggregatedOrderBookVolume {Exchange = "Exchange2", Price = 1.035m, Volume = 2}
                         }
                     },
                     new AggregatedOrderBookLevel
                     {
-                        Price = 0.562m, Volume = 6, ExchangeVolumes = new Dictionary<string, decimal>
+                        Price = 0.562m, Volume = 6, ExchangeVolumes = new List<AggregatedOrderBookVolume>
                         {
-                            ["Exchange1"] = 3,
-                            ["Exchange2"] = 3
+                            new AggregatedOrderBookVolume {Exchange = "Exchange1", Price = 0.5626635m, Volume = 3},
+                            new AggregatedOrderBookVolume {Exchange = "Exchange2", Price = 0.562m, Volume = 3}
                         }
                     }
                 }
@@ -196,17 +196,17 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.Tests.OrderBooks
 
         private static bool AreEqual(IReadOnlyCollection<AggregatedOrderBookLevel> a,
             IReadOnlyCollection<AggregatedOrderBookLevel> b)
-        {
-            return a.Count == b.Count && a.All(o => b.Any(p => AreEqual(o, p)));
-        }
+            => a.Count == b.Count && a.All(o => b.Any(p => AreEqual(o, p)));
 
         private static bool AreEqual(AggregatedOrderBookLevel a, AggregatedOrderBookLevel b)
         {
             return a.Price == b.Price &&
                    a.Volume == b.Volume &&
                    a.ExchangeVolumes.Count == b.ExchangeVolumes.Count &&
-                   a.ExchangeVolumes.All(o =>
-                       b.ExchangeVolumes.ContainsKey(o.Key) && b.ExchangeVolumes[o.Key] == o.Value);
+                   a.ExchangeVolumes.All(o => b.ExchangeVolumes.Any(p => AreEqual(o, p)));
         }
+
+        private static bool AreEqual(AggregatedOrderBookVolume a, AggregatedOrderBookVolume b)
+            => a.Exchange == b.Exchange && a.Price == b.Price && a.Volume == b.Volume;
     }
 }

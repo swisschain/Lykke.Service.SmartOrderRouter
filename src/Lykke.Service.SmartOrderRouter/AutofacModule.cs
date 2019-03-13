@@ -1,12 +1,16 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using JetBrains.Annotations;
+using Lykke.Common.ExchangeAdapter.Client;
 using Lykke.Sdk;
 using Lykke.Service.MarketInstruments.Client;
 using Lykke.Service.SmartOrderRouter.Managers;
 using Lykke.Service.SmartOrderRouter.Rabbit.Subscribers;
 using Lykke.Service.SmartOrderRouter.Settings;
 using Lykke.Service.SmartOrderRouter.Settings.ServiceSettings.Rabbit.Subscribers;
+using Lykke.Service.SmartOrderRouter.Timers;
 using Lykke.SettingsReader;
 
 namespace Lykke.Service.SmartOrderRouter
@@ -32,6 +36,8 @@ namespace Lykke.Service.SmartOrderRouter
             RegisterRabbit(builder);
 
             RegisterClients(builder);
+
+            RegisterTimers(builder);
 
             builder.RegisterType<StartupManager>()
                 .As<IStartupManager>();
@@ -61,7 +67,23 @@ namespace Lykke.Service.SmartOrderRouter
 
         private void RegisterClients(ContainerBuilder builder)
         {
+            IReadOnlyDictionary<string, AdapterEndpoint> endpoints =
+                _settings.CurrentValue.SmartOrderRouterService.ExchangeAdapters.ToDictionary(o => o.Name,
+                    v => new AdapterEndpoint(v.ApiKey, new Uri(v.Url)));
+
+            builder.RegisterInstance(new ExchangeAdapterClientFactory(endpoints))
+                .As<IExchangeAdapterClientFactory>();
+
             builder.RegisterMarketInstrumentsClient(_settings.CurrentValue.MarketInstrumentsServiceClient, null);
+        }
+
+        private void RegisterTimers(ContainerBuilder builder)
+        {
+            builder.RegisterType<BalancesTimer>()
+                .SingleInstance();
+            
+            builder.RegisterType<SmartOrderRouterTimer>()
+                .SingleInstance();
         }
     }
 }

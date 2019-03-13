@@ -54,7 +54,7 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.OrderBooks
 
             IReadOnlyList<ExternalOrderBook> externalOrderBooks = _externalOrderBookService.GetByAssetPair(assetPair);
 
-            var sellLevels = new Dictionary<decimal, Dictionary<string, decimal>>();
+            var sellLevels = new Dictionary<decimal, Dictionary<string, ExternalOrderBookLevel>>();
 
             foreach (ExternalOrderBook externalOrderBook in externalOrderBooks)
             {
@@ -63,13 +63,13 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.OrderBooks
                     decimal price = priceLevel.Price.TruncateDecimalPlaces(assetPairSettings.PriceAccuracy, true);
 
                     if (!sellLevels.ContainsKey(price))
-                        sellLevels[price] = new Dictionary<string, decimal>();
+                        sellLevels[price] = new Dictionary<string, ExternalOrderBookLevel>();
 
-                    sellLevels[price][externalOrderBook.Exchange] = priceLevel.Volume;
+                    sellLevels[price][externalOrderBook.Exchange] = priceLevel;
                 }
             }
 
-            var buyLevels = new Dictionary<decimal, Dictionary<string, decimal>>();
+            var buyLevels = new Dictionary<decimal, Dictionary<string, ExternalOrderBookLevel>>();
 
             foreach (ExternalOrderBook externalOrderBook in externalOrderBooks)
             {
@@ -78,9 +78,9 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.OrderBooks
                     decimal price = priceLevel.Price.TruncateDecimalPlaces(assetPairSettings.PriceAccuracy);
 
                     if (!buyLevels.ContainsKey(price))
-                        buyLevels[price] = new Dictionary<string, decimal>();
+                        buyLevels[price] = new Dictionary<string, ExternalOrderBookLevel>();
 
-                    buyLevels[price][externalOrderBook.Exchange] = priceLevel.Volume;
+                    buyLevels[price][externalOrderBook.Exchange] = priceLevel;
                 }
             }
 
@@ -92,8 +92,10 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.OrderBooks
                     .Select(priceLevel => new AggregatedOrderBookLevel
                     {
                         Price = priceLevel.Key,
-                        Volume = priceLevel.Value.Sum(exchangeVolume => exchangeVolume.Value),
+                        Volume = priceLevel.Value.Sum(exchangeVolume => exchangeVolume.Value.Volume),
                         ExchangeVolumes = priceLevel.Value
+                            .Select(o => new AggregatedOrderBookVolume(o.Key, o.Value.OriginalPrice, o.Value.Volume))
+                            .ToList()
                     })
                     .OrderBy(o => o.Price)
                     .ToList(),
@@ -101,8 +103,10 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.OrderBooks
                     .Select(priceLevel => new AggregatedOrderBookLevel
                     {
                         Price = priceLevel.Key,
-                        Volume = priceLevel.Value.Sum(exchangeVolume => exchangeVolume.Value),
+                        Volume = priceLevel.Value.Sum(exchangeVolume => exchangeVolume.Value.Volume),
                         ExchangeVolumes = priceLevel.Value
+                            .Select(o => new AggregatedOrderBookVolume(o.Key, o.Value.OriginalPrice, o.Value.Volume))
+                            .ToList()
                     })
                     .OrderByDescending(o => o.Price)
                     .ToList()
