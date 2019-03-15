@@ -50,10 +50,6 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.Balances
 
                     _balances.AddOrUpdate(exchange.Name, balances, (key, value) => balances);
                 }
-                catch (FailedOperationException exception)
-                {
-                    _log.WarningWithDetails(exception.Message, exception, new {Exchange = exchange.Name});
-                }
                 catch (Exception exception)
                 {
                     _log.ErrorWithDetails(exception, "An unexpected error occurred while getting balance",

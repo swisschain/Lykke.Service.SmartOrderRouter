@@ -32,7 +32,7 @@ namespace Lykke.Service.SmartOrderRouter.Controllers
 
         /// <inheritdoc/>
         /// <response code="204">The timer settings successfully updated.</response>
-        [HttpPost("timers")]
+        [HttpPut("timers")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         public async Task UpdateTimerSettingsAsync([FromBody] TimerSettingsModel model)
         {

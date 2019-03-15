@@ -24,6 +24,10 @@ namespace Lykke.Service.SmartOrderRouter.Validators
             RuleFor(o => o.TransactionFee)
                 .InclusiveBetween(0, 1)
                 .WithMessage("Transaction fee should be between 0 and 1");
+            
+            RuleFor(o => o.SlippageMarkup)
+                .InclusiveBetween(0, 1)
+                .WithMessage("Transaction fee should be between 0 and 1");
         }
     }
 }

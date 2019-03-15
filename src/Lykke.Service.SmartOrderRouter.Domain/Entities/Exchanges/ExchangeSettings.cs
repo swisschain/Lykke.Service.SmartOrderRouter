@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lykke.Service.SmartOrderRouter.Domain.Entities.Exchanges
 {
@@ -9,13 +10,14 @@ namespace Lykke.Service.SmartOrderRouter.Domain.Entities.Exchanges
     {
         public ExchangeSettings()
         {
+            Instruments = new List<string>();
         }
 
         public ExchangeSettings(string name)
+            : this()
         {
             Name = name;
             Status = ExchangeStatus.Stopped;
-            Instruments = new List<string>();
         }
 
         /// <summary>
@@ -54,7 +56,7 @@ namespace Lykke.Service.SmartOrderRouter.Domain.Entities.Exchanges
             {
                 Name = Name,
                 Status = Status,
-                Instruments = Instruments,
+                Instruments = (Instruments ?? new string[0]).ToList(),
                 MarketFee = MarketFee,
                 TransactionFee = TransactionFee,
                 SlippageMarkup = SlippageMarkup

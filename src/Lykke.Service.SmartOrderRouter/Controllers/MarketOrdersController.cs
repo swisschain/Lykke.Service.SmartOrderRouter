@@ -29,6 +29,9 @@ namespace Lykke.Service.SmartOrderRouter.Controllers
         [ProducesResponseType(typeof(IReadOnlyList<MarketOrderModel>), (int) HttpStatusCode.OK)]
         public async Task<IReadOnlyList<MarketOrderModel>> GetAsync(DateTime startDate, DateTime endDate, int? limit)
         {
+            if (startDate == DateTime.MinValue || endDate == DateTime.MinValue || startDate < endDate)
+                throw new ValidationApiException("Invalid requested timer range");
+
             IReadOnlyList<MarketOrder> marketOrders = await _marketOrderService.GetAllAsync(startDate, endDate, limit);
 
             return Mapper.Map<IReadOnlyList<MarketOrderModel>>(marketOrders);

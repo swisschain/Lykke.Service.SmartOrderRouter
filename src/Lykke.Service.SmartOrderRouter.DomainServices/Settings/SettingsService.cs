@@ -37,7 +37,7 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.Settings
                     timerSettings.Balances = TimeSpan.FromMinutes(1);
 
                 if (timerSettings.MarketOrders == TimeSpan.Zero)
-                    timerSettings.Balances = TimeSpan.FromSeconds(30);
+                    timerSettings.MarketOrders = TimeSpan.FromSeconds(30);
 
                 _timerSettings = timerSettings;
             }

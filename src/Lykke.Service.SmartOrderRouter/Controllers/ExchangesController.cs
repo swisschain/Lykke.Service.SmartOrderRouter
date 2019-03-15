@@ -83,7 +83,7 @@ namespace Lykke.Service.SmartOrderRouter.Controllers
         {
             try
             {
-                await _exchangeSettingsService.StartAsync(name, userId);
+                await _exchangeSettingsService.StopAsync(name, userId);
 
                 await _orderBookService.RemoveByExchangeAsync(name);
             }

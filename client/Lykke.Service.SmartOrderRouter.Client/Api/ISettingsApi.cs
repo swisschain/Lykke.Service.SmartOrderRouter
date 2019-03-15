@@ -22,7 +22,7 @@ namespace Lykke.Service.SmartOrderRouter.Client.Api
         /// Updates internal timers settings.
         /// </summary>
         /// <param name="model">The model that represent the timer settings.</param>
-        [Post("/api/Settings/timers")]
+        [Put("/api/Settings/timers")]
         Task UpdateTimerSettingsAsync([Body] TimerSettingsModel model);
     }
 }
