@@ -4,6 +4,10 @@
     <Version>1.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Lykke.Common.ExchangeAdapter.Client" Version="5.1.0" />
+    <PackageReference Include="Lykke.Service.MarketInstruments.Client" Version="0.0.2" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Lykke.Service.SmartOrderRouter.Domain\Lykke.Service.SmartOrderRouter.Domain.csproj" />
   </ItemGroup>
 </Project>

@@ -19,6 +19,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Lykke.Sdk" Version="5.10.2" />
+    <PackageReference Include="Lykke.Common.ExchangeAdapter" Version="5.1.0" />
+    <PackageReference Include="Lykke.RabbitMqBroker" Version="7.8.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\client\Lykke.Service.SmartOrderRouter.Client\Lykke.Service.SmartOrderRouter.Client.csproj" />
