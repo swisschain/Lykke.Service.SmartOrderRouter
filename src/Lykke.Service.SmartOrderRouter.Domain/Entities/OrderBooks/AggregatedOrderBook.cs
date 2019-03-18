@@ -68,7 +68,7 @@ namespace Lykke.Service.SmartOrderRouter.Domain.Entities.OrderBooks
                     }
                     else
                     {
-                        exchangeVolume.Volume = remainingVolume;
+                        exchangeVolume.Volume += remainingVolume;
                         remainingVolume = 0;
                     }
                     
