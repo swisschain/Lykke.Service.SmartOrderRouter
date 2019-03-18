@@ -70,7 +70,7 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.Exchanges
 
         public async Task StartAsync(string exchangeName, string userId)
         {
-            await SetStatusAsync(exchangeName, ExchangeStatus.Stopped);
+            await SetStatusAsync(exchangeName, ExchangeStatus.Active);
 
             _log.InfoWithDetails("Exchange activated", new {exchangeName, userId});
         }

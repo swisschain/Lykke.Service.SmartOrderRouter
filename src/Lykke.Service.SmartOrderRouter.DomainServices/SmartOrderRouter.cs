@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -176,8 +176,8 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices
             AssetPairModel assetPairModel = _marketInstrumentService.GetAssetPair(marketOrder.AssetPair, exchange);
 
             decimal remainingVolume = Math.Round(marketOrder.Volume - executedVolume, assetPairModel.VolumeAccuracy);
-            
-            return remainingVolume < assetPairModel.MinVolume;
+
+            return remainingVolume == 0 || remainingVolume < assetPairModel.MinVolume;
         }
 
         private async Task ExecuteActiveMarketOrderAsync(MarketOrder marketOrder)
