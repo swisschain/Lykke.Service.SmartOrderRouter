@@ -9,6 +9,8 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.Reports
 {
     public class BalanceReportService : IBalanceReportService
     {
+        private const string UsdAssetName = "USD";
+        
         private readonly IBalanceService _balanceService;
         private readonly IQuoteService _quoteService;
 
@@ -39,17 +41,26 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.Reports
 
             foreach (string asset in assets)
             {
-                var prices = new List<decimal>();
-
-                foreach (string exchange in exchanges)
+                decimal price;
+                
+                if (asset == UsdAssetName)
                 {
-                    Quote quote = _quoteService.GetByAssetPair(exchange, $"{asset}USD");
-
-                    if (quote != null)
-                        prices.Add(quote.Mid);
+                    price = 1;
                 }
+                else
+                {
+                    var prices = new List<decimal>();
 
-                decimal price = prices.DefaultIfEmpty(0).Average();
+                    foreach (string exchange in exchanges)
+                    {
+                        Quote quote = _quoteService.GetByAssetPair(exchange, $"{asset}{UsdAssetName}");
+
+                        if (quote != null)
+                            prices.Add(quote.Mid);
+                    }
+
+                    price = prices.DefaultIfEmpty(0).Average();
+                }
 
                 items.AddRange(balances
                     .Where(o => o.Asset == asset)
