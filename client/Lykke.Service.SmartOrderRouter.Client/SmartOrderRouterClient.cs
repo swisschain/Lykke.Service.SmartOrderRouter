@@ -17,6 +17,7 @@ namespace Lykke.Service.SmartOrderRouter.Client
             MarketOrders = httpClientGenerator.Generate<IMarketOrdersApi>();
             OrderBooks = httpClientGenerator.Generate<IOrderBooksApi>();
             Quotes = httpClientGenerator.Generate<IQuotesApi>();
+            Reports = httpClientGenerator.Generate<IReportsApi>();
             Settings = httpClientGenerator.Generate<ISettingsApi>();
         }
 
@@ -37,6 +38,9 @@ namespace Lykke.Service.SmartOrderRouter.Client
 
         /// <inheritdoc/>
         public IQuotesApi Quotes { get; set; }
+
+        /// <inheritdoc/>
+        public IReportsApi Reports { get; set; }
 
         /// <inheritdoc/>
         public ISettingsApi Settings { get; set; }

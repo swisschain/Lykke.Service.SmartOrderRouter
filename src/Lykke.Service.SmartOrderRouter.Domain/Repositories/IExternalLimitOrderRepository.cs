@@ -6,6 +6,8 @@ namespace Lykke.Service.SmartOrderRouter.Domain.Repositories
 {
     public interface IExternalLimitOrderRepository
     {
+        Task<IReadOnlyList<ExternalLimitOrder>> GetAllAsync();
+        
         Task<ExternalLimitOrder> GetByIdAsync(string externalLimitOrderId);
 
         Task<IReadOnlyList<ExternalLimitOrder>> GetByParentIdAsync(string parentOrderId);

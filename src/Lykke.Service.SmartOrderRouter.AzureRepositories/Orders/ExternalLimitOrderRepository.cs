@@ -22,6 +22,13 @@ namespace Lykke.Service.SmartOrderRouter.AzureRepositories.Orders
             _indices = indices;
         }
 
+        public async Task<IReadOnlyList<ExternalLimitOrder>> GetAllAsync()
+        {
+            IList<ExternalLimitOrderEntity> entities = await _storage.GetDataAsync();
+
+            return Mapper.Map<List<ExternalLimitOrder>>(entities);
+        }
+
         public async Task<ExternalLimitOrder> GetByIdAsync(string externalLimitOrderId)
         {
             ExternalLimitOrderEntity entity = await _storage.GetDataAsync(GetPartitionKey(externalLimitOrderId),
