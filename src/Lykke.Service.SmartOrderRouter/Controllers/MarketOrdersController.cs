@@ -7,6 +7,7 @@ using Lykke.Common.ApiLibrary.Exceptions;
 using Lykke.Service.SmartOrderRouter.Client.Api;
 using Lykke.Service.SmartOrderRouter.Client.Models.MarketOrders;
 using Lykke.Service.SmartOrderRouter.Domain.Entities.Orders;
+using Lykke.Service.SmartOrderRouter.Domain.Exceptions;
 using Lykke.Service.SmartOrderRouter.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 using OrderType = Lykke.Service.SmartOrderRouter.Client.Models.OrderType;
@@ -64,14 +65,23 @@ namespace Lykke.Service.SmartOrderRouter.Controllers
 
         /// <inheritdoc/>
         /// <response code="200">The market order successfully created.</response>
+        /// <response code="400">An error occurred while creating market order.</response>
         [HttpPost]
         [ProducesResponseType((int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task CreateAsync([FromBody] MarketOrderRequestModel model)
         {
-            await _marketOrderService.CreateAsync(model.ClientId, model.AssetPair, model.Volume,
-                model.Type == OrderType.Sell
-                    ? Domain.Entities.Orders.OrderType.Sell
-                    : Domain.Entities.Orders.OrderType.Buy);
+            try
+            {
+                await _marketOrderService.CreateAsync(model.ClientId, model.AssetPair, model.Volume,
+                    model.Type == OrderType.Sell
+                        ? Domain.Entities.Orders.OrderType.Sell
+                        : Domain.Entities.Orders.OrderType.Buy);
+            }
+            catch (FailedOperationException exception)
+            {
+                throw new ValidationApiException(exception.Message);
+            }
         }
     }
 }

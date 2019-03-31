@@ -70,7 +70,7 @@ namespace Lykke.Service.SmartOrderRouter.Rabbit.Subscribers
             try
             {
                 AssetPairModel assetPairSettings = _marketInstrumentService.GetAssetPairs()
-                    .FirstOrDefault(o => o.Exchange == orderBook.Source && o.Name == orderBook.Asset);
+                    .FirstOrDefault(o => o.Exchange == orderBook.Source && o.Id == orderBook.Asset);
 
                 if (assetPairSettings == null)
                     return;

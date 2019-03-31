@@ -12,15 +12,18 @@ namespace Lykke.Service.SmartOrderRouter.Managers
         private readonly BalancesTimer _balancesTimer;
         private readonly SmartOrderRouterTimer _smartOrderRouterTimer;
         private readonly OrderBookSubscriber[] _orderBookSubscribers;
+        private readonly QuoteSubscriber[] _quoteSubscribers;
 
         public StartupManager(
             BalancesTimer balancesTimer,
             SmartOrderRouterTimer smartOrderRouterTimer,
-            OrderBookSubscriber[] orderBookSubscribers)
+            OrderBookSubscriber[] orderBookSubscribers,
+            QuoteSubscriber[] quoteSubscribers)
         {
             _balancesTimer = balancesTimer;
             _smartOrderRouterTimer = smartOrderRouterTimer;
             _orderBookSubscribers = orderBookSubscribers;
+            _quoteSubscribers = quoteSubscribers;
         }
 
         public Task StartAsync()
@@ -30,6 +33,9 @@ namespace Lykke.Service.SmartOrderRouter.Managers
             foreach (OrderBookSubscriber orderBookSubscriber in _orderBookSubscribers)
                 orderBookSubscriber.Start();
 
+            foreach (QuoteSubscriber quoteSubscriber in _quoteSubscribers)
+                quoteSubscriber.Start();
+            
             _smartOrderRouterTimer.Start();
             
             return Task.CompletedTask;

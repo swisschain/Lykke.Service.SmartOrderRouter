@@ -63,6 +63,22 @@ namespace Lykke.Service.SmartOrderRouter
                     }))
                     .SingleInstance();
             }
+
+            MultiSourceSettings quotesSettings =
+                _settings.CurrentValue.SmartOrderRouterService.Rabbit.Subscribers.Quotes;
+
+            foreach (string exchange in quotesSettings.Exchanges)
+            {
+                builder.RegisterType<QuoteSubscriber>()
+                    .AsSelf()
+                    .WithParameter(TypedParameter.From(new SubscriberSettings
+                    {
+                        Exchange = exchange,
+                        QueueSuffix = orderBooksSettings.QueueSuffix,
+                        ConnectionString = orderBooksSettings.ConnectionString
+                    }))
+                    .SingleInstance();
+            }
         }
 
         private void RegisterClients(ContainerBuilder builder)
@@ -81,7 +97,7 @@ namespace Lykke.Service.SmartOrderRouter
         {
             builder.RegisterType<BalancesTimer>()
                 .SingleInstance();
-            
+
             builder.RegisterType<SmartOrderRouterTimer>()
                 .SingleInstance();
         }

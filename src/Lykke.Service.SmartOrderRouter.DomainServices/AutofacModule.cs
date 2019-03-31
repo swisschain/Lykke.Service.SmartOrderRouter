@@ -7,6 +7,8 @@ using Lykke.Service.SmartOrderRouter.DomainServices.Balances;
 using Lykke.Service.SmartOrderRouter.DomainServices.Exchanges;
 using Lykke.Service.SmartOrderRouter.DomainServices.OrderBooks;
 using Lykke.Service.SmartOrderRouter.DomainServices.Orders;
+using Lykke.Service.SmartOrderRouter.DomainServices.Quotes;
+using Lykke.Service.SmartOrderRouter.DomainServices.Reports;
 using Lykke.Service.SmartOrderRouter.DomainServices.Settings;
 
 namespace Lykke.Service.SmartOrderRouter.DomainServices
@@ -69,6 +71,16 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices
 
             builder.RegisterType<MarketOrderService>()
                 .As<IMarketOrderService>()
+                .SingleInstance();
+
+
+            builder.RegisterType<QuoteService>()
+                .As<IQuoteService>()
+                .SingleInstance();
+
+
+            builder.RegisterType<BalanceReportService>()
+                .As<IBalanceReportService>()
                 .SingleInstance();
 
 

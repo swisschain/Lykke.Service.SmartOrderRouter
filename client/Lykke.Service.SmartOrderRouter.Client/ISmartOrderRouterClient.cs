@@ -38,6 +38,11 @@ namespace Lykke.Service.SmartOrderRouter.Client
         /// Quotes API.
         /// </summary>
         IQuotesApi Quotes { get; set; }
+        
+        /// <summary>
+        /// Reports API.
+        /// </summary>
+        IReportsApi Reports { get; set; }
 
         /// <summary>
         /// Settings API.

@@ -27,6 +27,18 @@ SmartOrderRouterService:
         QueueSuffix:
           settings-key: SmartOrderRouterService-Rabbit-Subscribers-OrderBooks-QueueSuffix
           
+      Quotes:
+        ConnectionString:
+          settings-key: RawPriceRabbitMq
+          types:
+            - RabbitMq
+        Exchanges:
+          settings-key: SmartOrderRouterService-Rabbit-Subscribers-Quotes-Exchanges
+          types:
+            - JsonArray
+        QueueSuffix:
+          settings-key: SmartOrderRouterService-Rabbit-Subscribers-Quotes-QueueSuffix
+          
   ExchangeAdapters:
     settings-key: SmartOrderRouterService-ExchangeAdapters
     types:
