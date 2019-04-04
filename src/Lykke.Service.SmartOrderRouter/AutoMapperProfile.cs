@@ -4,8 +4,10 @@ using Lykke.Service.SmartOrderRouter.Client.Models.Balances;
 using Lykke.Service.SmartOrderRouter.Client.Models.Exchanges;
 using Lykke.Service.SmartOrderRouter.Client.Models.ExternalLimitOrders;
 using Lykke.Service.SmartOrderRouter.Client.Models.OrderBooks;
+using Lykke.Service.SmartOrderRouter.Client.Models.Quotes;
 using Lykke.Service.SmartOrderRouter.Client.Models.Reports;
 using Lykke.Service.SmartOrderRouter.Client.Models.Settings;
+using Lykke.Service.SmartOrderRouter.Domain.Entities;
 using Lykke.Service.SmartOrderRouter.Domain.Entities.Balances;
 using Lykke.Service.SmartOrderRouter.Domain.Entities.Exchanges;
 using Lykke.Service.SmartOrderRouter.Domain.Entities.OrderBooks;
@@ -34,6 +36,11 @@ namespace Lykke.Service.SmartOrderRouter
             CreateMap<OrderBookLevel, OrderBookLevelModel>(MemberList.Source);
             CreateMap<ExternalOrderBook, ExternalOrderBookModel>(MemberList.Source);
             CreateMap<ExternalOrderBookLevel, ExternalOrderBookLevelModel>(MemberList.Source);
+
+            CreateMap<Quote, QuoteModel>(MemberList.Source)
+                .ForSourceMember(src => src.Time, opt => opt.DoNotValidate())
+                .ForSourceMember(src => src.Mid, opt => opt.DoNotValidate())
+                .ForSourceMember(src => src.Spread, opt => opt.DoNotValidate());
 
             CreateMap<BalanceReport, BalanceReportModel>(MemberList.Source);
             CreateMap<BalanceReportItem, BalanceReportItemModel>(MemberList.Source);

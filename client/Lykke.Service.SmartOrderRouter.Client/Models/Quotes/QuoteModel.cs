@@ -16,7 +16,7 @@ namespace Lykke.Service.SmartOrderRouter.Client.Models.Quotes
         /// <summary>
         /// The identifier of the asset pair.
         /// </summary>
-        public string AssetPairId { get; set; }
+        public string AssetPair { get; set; }
 
         /// <summary>
         /// The best sell price in order book.
