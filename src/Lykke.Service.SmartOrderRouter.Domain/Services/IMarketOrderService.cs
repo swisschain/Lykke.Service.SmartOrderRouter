@@ -11,6 +11,10 @@ namespace Lykke.Service.SmartOrderRouter.Domain.Services
 
         Task<IReadOnlyList<MarketOrder>> GetByStatusAsync(MarketOrderStatus marketOrderStatus);
 
+        Task<MarketOrder> GetFirstActiveAsync();
+
+        Task<MarketOrder> GetNextActiveAsync();
+        
         Task<IReadOnlyList<MarketOrder>> GetByClientIdAsync(string clientId);
 
         Task<IReadOnlyList<MarketOrder>> GetAllAsync(DateTime startDate, DateTime endDate, int? limit);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Common.Log;
 using Lykke.Common.Log;
@@ -40,6 +41,38 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.Orders
         public Task<IReadOnlyList<MarketOrder>> GetByStatusAsync(MarketOrderStatus marketOrderStatus)
         {
             return _marketOrderRepository.GetByStatusAsync(marketOrderStatus);
+        }
+
+        public async Task<MarketOrder> GetFirstActiveAsync()
+        {
+            IReadOnlyList<MarketOrder> activeMarketOrders = await GetByStatusAsync(MarketOrderStatus.Active);
+
+            return activeMarketOrders
+                .OrderBy(o => o.CreatedDate)
+                .FirstOrDefault();
+        }
+
+        public async Task<MarketOrder> GetNextActiveAsync()
+        {
+            MarketOrder activeMarketOrder = await GetFirstActiveAsync();
+
+            if (activeMarketOrder != null)
+                return activeMarketOrder;
+
+            IReadOnlyList<MarketOrder> marketOrders = await GetByStatusAsync(MarketOrderStatus.New);
+
+            MarketOrder marketOrder = marketOrders
+                .OrderBy(o => o.CreatedDate)
+                .FirstOrDefault();
+
+            if (marketOrder == null)
+                return null;
+
+            marketOrder.Status = MarketOrderStatus.Active;
+
+            await UpdateAsync(marketOrder);
+
+            return marketOrder;
         }
 
         public Task<IReadOnlyList<MarketOrder>> GetByClientIdAsync(string clientId)
