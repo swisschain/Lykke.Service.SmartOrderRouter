@@ -42,6 +42,10 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices
                     .SingleInstance();
             }
 
+            builder.RegisterType<ExchangeService>()
+                .As<IExchangeService>()
+                .SingleInstance();
+
             builder.RegisterType<ExchangeSettingsService>()
                 .As<IExchangeSettingsService>()
                 .WithParameter(TypedParameter.From(_exchanges))
