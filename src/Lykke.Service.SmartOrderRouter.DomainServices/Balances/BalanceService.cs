@@ -32,6 +32,16 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.Balances
         public IReadOnlyList<Balance> GetAll()
             => _balances.Values.SelectMany(o => o).ToList();
 
+        public Balance Get(string exchange, string asset)
+        {
+            Balance balance = null;
+
+            if (_balances.TryGetValue(exchange, out IReadOnlyList<Balance> balances))
+                balance = balances.FirstOrDefault(o => o.Asset == asset);
+            
+            return balance ?? new Balance(exchange, asset, decimal.Zero, decimal.Zero);
+        }
+
         public IReadOnlyList<Balance> GetByExchange(string exchange)
         {
             if (_balances.TryGetValue(exchange, out IReadOnlyList<Balance> balances))

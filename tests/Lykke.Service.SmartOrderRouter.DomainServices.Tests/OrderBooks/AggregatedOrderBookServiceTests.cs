@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Service.MarketInstruments.Client.Models.AssetPairs;
 using Lykke.Service.MarketInstruments.Client.Services;
+using Lykke.Service.SmartOrderRouter.Domain.Entities.Balances;
 using Lykke.Service.SmartOrderRouter.Domain.Entities.OrderBooks;
 using Lykke.Service.SmartOrderRouter.Domain.Services;
 using Lykke.Service.SmartOrderRouter.DomainServices.OrderBooks;
@@ -15,18 +16,125 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.Tests.OrderBooks
     [TestClass]
     public class AggregatedOrderBookServiceTests
     {
+        private const string Exchange = "e";
+        private const string Exchange1 = "e1";
+        private const string Exchange2 = "e2";
+        private const string Exchange3 = "e3";
+        private const string AssetPair = "BTCUSD";
+        private const string BaseAsset = "BTC";
+        private const string QuoteAsset = "USD";
+
         private readonly Mock<IExternalOrderBookService> _externalOrderBookServiceMock =
             new Mock<IExternalOrderBookService>();
 
         private readonly Mock<IMarketInstrumentService> _marketInstrumentsServiceMock =
             new Mock<IMarketInstrumentService>();
 
+        private readonly Mock<IBalanceService> _balanceServiceMock =
+            new Mock<IBalanceService>();
+
         private readonly Mock<ISettingsService> _settingsServiceMock =
             new Mock<ISettingsService>();
 
-        private readonly List<AssetPairModel> _assetPairs = new List<AssetPairModel>();
+        private readonly List<AssetPairModel> _assetPairs = new List<AssetPairModel>
+        {
+            new AssetPairModel
+            {
+                Name = AssetPair,
+                PriceAccuracy = 2,
+                VolumeAccuracy = 8,
+                BaseAsset = BaseAsset,
+                QuoteAsset = QuoteAsset,
+                Exchange = Exchange
+            },
+            new AssetPairModel
+            {
+                Name = AssetPair,
+                PriceAccuracy = 3,
+                VolumeAccuracy = 8,
+                BaseAsset = BaseAsset,
+                QuoteAsset = QuoteAsset,
+                Exchange = Exchange1
+            },
+            new AssetPairModel
+            {
+                Name = AssetPair,
+                PriceAccuracy = 4,
+                VolumeAccuracy = 8,
+                BaseAsset = BaseAsset,
+                QuoteAsset = QuoteAsset,
+                Exchange = Exchange2
+            },
+            new AssetPairModel
+            {
+                Name = AssetPair,
+                PriceAccuracy = 5,
+                VolumeAccuracy = 8,
+                BaseAsset = BaseAsset,
+                QuoteAsset = QuoteAsset,
+                Exchange = Exchange3
+            }
+        };
 
-        private readonly List<ExternalOrderBook> _externalOrderBooks = new List<ExternalOrderBook>();
+        private readonly List<ExternalOrderBook> _externalOrderBooks = new List<ExternalOrderBook>
+        {
+            new ExternalOrderBook
+            {
+                Exchange = Exchange1,
+                AssetPair = AssetPair,
+                Timestamp = DateTime.UtcNow,
+                SellLevels = new List<ExternalOrderBookLevel>
+                {
+                    new ExternalOrderBookLevel {Price = 109.500m, Volume = 3},
+                    new ExternalOrderBookLevel {Price = 105.800m, Volume = 2},
+                    new ExternalOrderBookLevel {Price = 100.000m, Volume = 1}
+                },
+                BuyLevels = new List<ExternalOrderBookLevel>
+                {
+                    new ExternalOrderBookLevel {Price = 95.000m, Volume = 1},
+                    new ExternalOrderBookLevel {Price = 93.000m, Volume = 2},
+                    new ExternalOrderBookLevel {Price = 87.562m, Volume = 3}
+                }
+            },
+            new ExternalOrderBook
+            {
+                Exchange = Exchange2,
+                AssetPair = AssetPair,
+                Timestamp = DateTime.UtcNow,
+                SellLevels = new List<ExternalOrderBookLevel>
+                {
+                    new ExternalOrderBookLevel {Price = 107.8770m, Volume = 3},
+                    new ExternalOrderBookLevel {Price = 105.8000m, Volume = 2},
+                    new ExternalOrderBookLevel {Price = 100.0000m, Volume = 1}
+                },
+                BuyLevels = new List<ExternalOrderBookLevel>
+                {
+                    new ExternalOrderBookLevel {Price = 99.5760m, Volume = 1},
+                    new ExternalOrderBookLevel {Price = 96.0000m, Volume = 2},
+                    new ExternalOrderBookLevel {Price = 93.0000m, Volume = 3}
+                }
+            },
+            new ExternalOrderBook
+            {
+                Exchange = Exchange3,
+                AssetPair = AssetPair,
+                Timestamp = DateTime.UtcNow,
+                SellLevels = new List<ExternalOrderBookLevel>
+                {
+                    new ExternalOrderBookLevel {Price = 101.40001m, Volume = 3},
+                    new ExternalOrderBookLevel {Price = 100.00000m, Volume = 2},
+                    new ExternalOrderBookLevel {Price = 98.00000m, Volume = 1}
+                },
+                BuyLevels = new List<ExternalOrderBookLevel>
+                {
+                    new ExternalOrderBookLevel {Price = 99.50000m, Volume = 1},
+                    new ExternalOrderBookLevel {Price = 96.00005m, Volume = 2},
+                    new ExternalOrderBookLevel {Price = 93.00000m, Volume = 3}
+                }
+            }
+        };
+
+        private readonly List<Balance> _balances = new List<Balance>();
 
         private AggregatedOrderBookService _service;
 
@@ -40,97 +148,82 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.Tests.OrderBooks
                 .Returns((string name, string exchange) =>
                     _assetPairs.FirstOrDefault(o => o.Name == name && o.Exchange == exchange));
 
+            _balanceServiceMock.Setup(o => o.Get(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns((string exchange, string asset) =>
+                    _balances.FirstOrDefault(o => o.Exchange == exchange && o.Asset == asset) ??
+                    new Balance(exchange, asset, decimal.Zero, decimal.Zero));
+
+            _settingsServiceMock.Setup(o => o.GetExchangeName())
+                .Returns(Exchange);
+
             _service = new AggregatedOrderBookService(
                 _externalOrderBookServiceMock.Object,
                 _marketInstrumentsServiceMock.Object,
+                _balanceServiceMock.Object,
                 _settingsServiceMock.Object);
         }
 
         [TestMethod]
-        public async Task Create_Order_Book_From_Several_Exchanges()
+        public async Task Create_Order_Book_With_Unlimited_Balance()
         {
             // arrange
 
-            _assetPairs.Add(new AssetPairModel
-            {
-                Name = "BTCUSD",
-                PriceAccuracy = 3
-            });
-
-            _externalOrderBooks.AddRange(new[]
-            {
-                new ExternalOrderBook
-                {
-                    Exchange = "Exchange1",
-                    AssetPair = "BTCUSD",
-                    Timestamp = DateTime.UtcNow,
-                    SellLevels = new List<ExternalOrderBookLevel>
-                    {
-                        new ExternalOrderBookLevel {Price = 1.8762345m, Volume = 1, OriginalPrice = 1.8762345m},
-                        new ExternalOrderBookLevel {Price = 2.1341931m, Volume = 2, OriginalPrice = 2.1341931m},
-                        new ExternalOrderBookLevel {Price = 3.9626635m, Volume = 3, OriginalPrice = 3.9626635m}
-                    },
-                    BuyLevels = new List<ExternalOrderBookLevel>
-                    {
-                        new ExternalOrderBookLevel {Price = 1.5761689m, Volume = 1, OriginalPrice = 1.5761689m},
-                        new ExternalOrderBookLevel {Price = 1.0341931m, Volume = 2, OriginalPrice = 1.0341931m},
-                        new ExternalOrderBookLevel {Price = 0.5626635m, Volume = 3, OriginalPrice = 0.5626635m}
-                    }
-                },
-                new ExternalOrderBook
-                {
-                    Exchange = "Exchange2",
-                    AssetPair = "BTCUSD",
-                    Timestamp = DateTime.UtcNow,
-                    SellLevels = new List<ExternalOrderBookLevel>
-                    {
-                        new ExternalOrderBookLevel {Price = 1.877m, Volume = 1, OriginalPrice = 1.877m},
-                        new ExternalOrderBookLevel {Price = 2.136m, Volume = 2, OriginalPrice = 2.136m},
-                        new ExternalOrderBookLevel {Price = 3.963m, Volume = 3, OriginalPrice = 3.963m}
-                    },
-                    BuyLevels = new List<ExternalOrderBookLevel>
-                    {
-                        new ExternalOrderBookLevel {Price = 1.576m, Volume = 1, OriginalPrice = 1.576m},
-                        new ExternalOrderBookLevel {Price = 1.035m, Volume = 2, OriginalPrice = 1.035m},
-                        new ExternalOrderBookLevel {Price = 0.562m, Volume = 3, OriginalPrice = 0.562m}
-                    }
-                }
-            });
+            _balances.Add(new Balance(Exchange1, BaseAsset, int.MaxValue, decimal.Zero));
+            _balances.Add(new Balance(Exchange1, QuoteAsset, int.MaxValue, decimal.Zero));
+            _balances.Add(new Balance(Exchange2, BaseAsset, int.MaxValue, decimal.Zero));
+            _balances.Add(new Balance(Exchange2, QuoteAsset, int.MaxValue, decimal.Zero));
+            _balances.Add(new Balance(Exchange3, BaseAsset, int.MaxValue, decimal.Zero));
+            _balances.Add(new Balance(Exchange3, QuoteAsset, int.MaxValue, decimal.Zero));
 
             var expectedAggregatedOrderBook = new AggregatedOrderBook
             {
-                AssetPair = "BTCUSD",
+                AssetPair = AssetPair,
                 Timestamp = DateTime.UtcNow,
                 SellLevels = new List<AggregatedOrderBookLevel>
                 {
                     new AggregatedOrderBookLevel
                     {
-                        Price = 1.877m, Volume = 2, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        Price = 98.00m, Volume = 1, ExchangeVolumes = new List<AggregatedOrderBookVolume>
                         {
-                            new AggregatedOrderBookVolume {Exchange = "Exchange1", Price = 1.8762345m, Volume = 1},
-                            new AggregatedOrderBookVolume {Exchange = "Exchange2", Price = 1.877m, Volume = 1}
+                            new AggregatedOrderBookVolume {Exchange = Exchange3, Volume = 1}
                         }
                     },
                     new AggregatedOrderBookLevel
                     {
-                        Price = 2.135m, Volume = 2, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        Price = 100.00m, Volume = 4, ExchangeVolumes = new List<AggregatedOrderBookVolume>
                         {
-                            new AggregatedOrderBookVolume {Exchange = "Exchange1", Price = 2.1341931m, Volume = 2}
+                            new AggregatedOrderBookVolume {Exchange = Exchange1, Volume = 1},
+                            new AggregatedOrderBookVolume {Exchange = Exchange2, Volume = 1},
+                            new AggregatedOrderBookVolume {Exchange = Exchange3, Volume = 2}
                         }
                     },
                     new AggregatedOrderBookLevel
                     {
-                        Price = 2.136m, Volume = 2, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        Price = 101.41m, Volume = 3, ExchangeVolumes = new List<AggregatedOrderBookVolume>
                         {
-                            new AggregatedOrderBookVolume {Exchange = "Exchange2", Price = 2.136m, Volume = 2}
+                            new AggregatedOrderBookVolume {Exchange = Exchange3, Volume = 3}
                         }
                     },
                     new AggregatedOrderBookLevel
                     {
-                        Price = 3.963m, Volume = 6, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        Price = 105.8m, Volume = 4, ExchangeVolumes = new List<AggregatedOrderBookVolume>
                         {
-                            new AggregatedOrderBookVolume {Exchange = "Exchange1", Price = 3.9626635m, Volume = 3},
-                            new AggregatedOrderBookVolume {Exchange = "Exchange2", Price = 3.963m, Volume = 3}
+                            new AggregatedOrderBookVolume {Exchange = Exchange1, Volume = 2},
+                            new AggregatedOrderBookVolume {Exchange = Exchange2, Volume = 2}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 107.88m, Volume = 3, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange2, Volume = 3}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 109.5m, Volume = 3, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange1, Volume = 3}
                         }
                     }
                 },
@@ -138,32 +231,47 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.Tests.OrderBooks
                 {
                     new AggregatedOrderBookLevel
                     {
-                        Price = 1.576m, Volume = 2, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        Price = 99.57m, Volume = 1, ExchangeVolumes = new List<AggregatedOrderBookVolume>
                         {
-                            new AggregatedOrderBookVolume {Exchange = "Exchange1", Price = 1.5761689m, Volume = 1},
-                            new AggregatedOrderBookVolume {Exchange = "Exchange2", Price = 1.576m, Volume = 1}
+                            new AggregatedOrderBookVolume {Exchange = Exchange2, Volume = 1}
                         }
                     },
                     new AggregatedOrderBookLevel
                     {
-                        Price = 1.034m, Volume = 2, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        Price = 99.50m, Volume = 1, ExchangeVolumes = new List<AggregatedOrderBookVolume>
                         {
-                            new AggregatedOrderBookVolume {Exchange = "Exchange1", Price = 1.0341931m, Volume = 2}
+                            new AggregatedOrderBookVolume {Exchange = Exchange3, Volume = 1}
                         }
                     },
                     new AggregatedOrderBookLevel
                     {
-                        Price = 1.035m, Volume = 2, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        Price = 96.00m, Volume = 4, ExchangeVolumes = new List<AggregatedOrderBookVolume>
                         {
-                            new AggregatedOrderBookVolume {Exchange = "Exchange2", Price = 1.035m, Volume = 2}
+                            new AggregatedOrderBookVolume {Exchange = Exchange2, Volume = 2},
+                            new AggregatedOrderBookVolume {Exchange = Exchange3, Volume = 2}
                         }
                     },
                     new AggregatedOrderBookLevel
                     {
-                        Price = 0.562m, Volume = 6, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        Price = 95.00m, Volume = 1, ExchangeVolumes = new List<AggregatedOrderBookVolume>
                         {
-                            new AggregatedOrderBookVolume {Exchange = "Exchange1", Price = 0.5626635m, Volume = 3},
-                            new AggregatedOrderBookVolume {Exchange = "Exchange2", Price = 0.562m, Volume = 3}
+                            new AggregatedOrderBookVolume {Exchange = Exchange1, Volume = 1}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 93.00m, Volume = 8, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange1, Volume = 2},
+                            new AggregatedOrderBookVolume {Exchange = Exchange2, Volume = 3},
+                            new AggregatedOrderBookVolume {Exchange = Exchange3, Volume = 3}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 87.56m, Volume = 3, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange1, Volume = 3}
                         }
                     }
                 }
@@ -171,15 +279,205 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.Tests.OrderBooks
 
             // act
 
-            await _service.UpdateAsync("BTCUSD");
+            await _service.UpdateAsync(AssetPair);
 
-            var actualAggregatedOrderBook = _service.GetByAssetPair("BTCUSD");
+            var actualAggregatedOrderBook = _service.GetByAssetPair(AssetPair);
 
             // assert
 
             Assert.IsTrue(AreEqual(expectedAggregatedOrderBook, actualAggregatedOrderBook));
         }
 
+                [TestMethod]
+        public async Task Create_Order_Book_With_Limited_Balance()
+        {
+            // arrange
+
+            _balances.Add(new Balance(Exchange1, BaseAsset, 4, decimal.Zero));
+            _balances.Add(new Balance(Exchange1, QuoteAsset, 368.562m, decimal.Zero));
+            _balances.Add(new Balance(Exchange2, BaseAsset, 5, decimal.Zero));
+            _balances.Add(new Balance(Exchange2, QuoteAsset, 477.576m, decimal.Zero));
+            _balances.Add(new Balance(Exchange3, BaseAsset, 2, decimal.Zero));
+            _balances.Add(new Balance(Exchange3, QuoteAsset, 195.50005m, decimal.Zero));
+
+            var expectedAggregatedOrderBook = new AggregatedOrderBook
+            {
+                AssetPair = AssetPair,
+                Timestamp = DateTime.UtcNow,
+                SellLevels = new List<AggregatedOrderBookLevel>
+                {
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 98.00m, Volume = 1, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange3, Volume = 1}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 100.00m, Volume = 3, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange1, Volume = 1},
+                            new AggregatedOrderBookVolume {Exchange = Exchange2, Volume = 1},
+                            new AggregatedOrderBookVolume {Exchange = Exchange3, Volume = 1}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 105.8m, Volume = 4, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange1, Volume = 2},
+                            new AggregatedOrderBookVolume {Exchange = Exchange2, Volume = 2}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 107.88m, Volume = 2, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange2, Volume = 2}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 109.5m, Volume = 1, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange1, Volume = 1}
+                        }
+                    }
+                },
+                BuyLevels = new List<AggregatedOrderBookLevel>
+                {
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 99.57m, Volume = 1, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange2, Volume = 1}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 99.50m, Volume = 1, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange3, Volume = 1}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 96.00m, Volume = 3, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange2, Volume = 2},
+                            new AggregatedOrderBookVolume {Exchange = Exchange3, Volume = 1}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 95.00m, Volume = 1, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange1, Volume = 1}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 93.00m, Volume = 4, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange1, Volume = 2},
+                            new AggregatedOrderBookVolume {Exchange = Exchange2, Volume = 2}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 87.56m, Volume = 1, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange1, Volume = 1}
+                        }
+                    }
+                }
+            };
+
+            // act
+
+            await _service.UpdateAsync(AssetPair);
+
+            var actualAggregatedOrderBook = _service.GetByAssetPair(AssetPair);
+
+            // assert
+
+            Assert.IsTrue(AreEqual(expectedAggregatedOrderBook, actualAggregatedOrderBook));
+        }
+        
+        [TestMethod]
+        public async Task Create_Order_Book_With_Zero_Balance_Except_Exchange3()
+        {
+            // arrange
+
+            _balances.Add(new Balance(Exchange3, BaseAsset, int.MaxValue, decimal.Zero));
+            _balances.Add(new Balance(Exchange3, QuoteAsset, int.MaxValue, decimal.Zero));
+
+            var expectedAggregatedOrderBook = new AggregatedOrderBook
+            {
+                AssetPair = AssetPair,
+                Timestamp = DateTime.UtcNow,
+                SellLevels = new List<AggregatedOrderBookLevel>
+                {
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 98.00m, Volume = 1, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange3, Volume = 1}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 100.00m, Volume = 2, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange3, Volume = 2}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 101.41m, Volume = 3, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange3, Volume = 3}
+                        }
+                    }
+                },
+                BuyLevels = new List<AggregatedOrderBookLevel>
+                {
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 99.50m, Volume = 1, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange3, Volume = 1}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 96.00m, Volume = 2, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange3, Volume = 2}
+                        }
+                    },
+                    new AggregatedOrderBookLevel
+                    {
+                        Price = 93.00m, Volume = 3, ExchangeVolumes = new List<AggregatedOrderBookVolume>
+                        {
+                            new AggregatedOrderBookVolume {Exchange = Exchange3, Volume = 3}
+                        }
+                    }
+                }
+            };
+
+            // act
+
+            await _service.UpdateAsync(AssetPair);
+
+            var actualAggregatedOrderBook = _service.GetByAssetPair(AssetPair);
+
+            // assert
+
+            Assert.IsTrue(AreEqual(expectedAggregatedOrderBook, actualAggregatedOrderBook));
+        }
+        
         private static bool AreEqual(AggregatedOrderBook a, AggregatedOrderBook b)
         {
             if (a == null && b == null)

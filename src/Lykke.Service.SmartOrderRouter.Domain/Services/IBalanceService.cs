@@ -8,6 +8,8 @@ namespace Lykke.Service.SmartOrderRouter.Domain.Services
     {
         IReadOnlyList<Balance> GetAll();
 
+        Balance Get(string exchange, string asset);
+
         IReadOnlyList<Balance> GetByExchange(string exchange);
 
         Task UpdateAsync();
