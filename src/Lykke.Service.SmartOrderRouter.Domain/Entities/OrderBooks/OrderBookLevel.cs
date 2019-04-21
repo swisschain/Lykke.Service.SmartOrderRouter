@@ -5,6 +5,16 @@ namespace Lykke.Service.SmartOrderRouter.Domain.Entities.OrderBooks
     /// </summary>
     public class OrderBookLevel
     {
+        public OrderBookLevel()
+        {
+        }
+
+        public OrderBookLevel(decimal price, decimal volume)
+        {
+            Price = price;
+            Volume = volume;
+        }
+        
         /// <summary>
         /// The price of order book level.
         /// </summary>

@@ -5,6 +5,17 @@ namespace Lykke.Service.SmartOrderRouter.Domain.Entities.OrderBooks
     /// </summary>
     public class ExternalOrderBookLevel : OrderBookLevel
     {
+        public ExternalOrderBookLevel()
+        {
+        }
+
+        public ExternalOrderBookLevel(decimal price, decimal volume, decimal markup, decimal originalPrice)
+            : base(price, volume)
+        {
+            Markup = markup;
+            OriginalPrice = originalPrice;
+        }
+
         /// <summary>
         /// The total markup that was applied to the price (market fees).
         /// </summary>
