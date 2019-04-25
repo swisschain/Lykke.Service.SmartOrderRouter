@@ -64,10 +64,12 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.OrderBooks
                 {
                     decimal price = priceLevel.Price.TruncateDecimalPlaces(assetPairSettings.PriceAccuracy, true);
 
+                    decimal volume = Math.Round(priceLevel.Volume, assetPairSettings.VolumeAccuracy);
+
                     if (!sellLevels.ContainsKey(price))
                         sellLevels[price] = 0;
 
-                    sellLevels[price] += priceLevel.Volume;
+                    sellLevels[price] += volume;
 
                     if (ask > price)
                         ask = price;
@@ -84,10 +86,12 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.OrderBooks
                 {
                     decimal price = priceLevel.Price.TruncateDecimalPlaces(assetPairSettings.PriceAccuracy);
 
+                    decimal volume = Math.Round(priceLevel.Volume, assetPairSettings.VolumeAccuracy);
+                    
                     if (!buyLevels.ContainsKey(price))
                         buyLevels[price] = 0;
 
-                    buyLevels[price] += priceLevel.Volume;
+                    buyLevels[price] += volume;
 
                     if (bid < price)
                         bid = price;

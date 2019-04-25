@@ -91,7 +91,7 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.OrderBooks
                     {
                         Price = (o.Price * (1 + exchangeSettings.MarketFee + exchangeSettings.TransactionFee))
                             .TruncateDecimalPlaces(assetPairSettings.PriceAccuracy, true),
-                        Volume = o.Volume,
+                        Volume = Math.Round(o.Volume, assetPairSettings.VolumeAccuracy),
                         Markup = exchangeSettings.MarketFee + exchangeSettings.TransactionFee,
                         OriginalPrice = o.Price
                     })
@@ -101,7 +101,7 @@ namespace Lykke.Service.SmartOrderRouter.DomainServices.OrderBooks
                     {
                         Price = (o.Price * (1 - exchangeSettings.MarketFee - exchangeSettings.TransactionFee))
                             .TruncateDecimalPlaces(assetPairSettings.PriceAccuracy),
-                        Volume = o.Volume,
+                        Volume = Math.Round(o.Volume, assetPairSettings.VolumeAccuracy),
                         Markup = exchangeSettings.MarketFee + exchangeSettings.TransactionFee,
                         OriginalPrice = o.Price
                     })
