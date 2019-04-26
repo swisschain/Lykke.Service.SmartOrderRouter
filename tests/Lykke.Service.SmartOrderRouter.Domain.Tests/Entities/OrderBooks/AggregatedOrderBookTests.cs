@@ -392,6 +392,32 @@ namespace Lykke.Service.SmartOrderRouter.Domain.Tests.Entities.OrderBooks
             Assert.IsTrue(AreEqual(expectedVolumes, actualVolumes));
         }
 
+        [TestMethod]
+        public void Return_Empty_Collection_If_Active_Volume_Is_Greater_Or_Equal_To_Volume()
+        {
+            // arrange
+
+            const decimal volume = 0.11111155m;
+
+            _activeLimitOrders.AddRange(new[]
+            {
+                new ExternalLimitOrder {Exchange = Exchange1, Volume = 0.111112m}
+            });
+
+            _excludedExchanges.AddRange(new[] {Exchange3});
+
+            var expectedVolumes = new ExchangeVolume[0];
+
+            // act
+
+            IReadOnlyList<ExchangeVolume> actualVolumes =
+                _defaultOrderBook.GetSellVolumes(volume, _activeLimitOrders, _excludedExchanges);
+
+            // assert
+
+            Assert.IsTrue(AreEqual(expectedVolumes, actualVolumes));
+        }
+
         private static bool AreEqual(IReadOnlyCollection<ExchangeVolume> a, IReadOnlyCollection<ExchangeVolume> b)
         {
             if (a == null && b == null)

@@ -50,7 +50,7 @@ namespace Lykke.Service.SmartOrderRouter.Domain.Entities.OrderBooks
             decimal volume,
             IReadOnlyList<ExternalLimitOrder> activeLimitOrders,
             IReadOnlyList<string> excludedExchanges,
-            IEnumerable<AggregatedOrderBookLevel> levels)
+            IReadOnlyList<AggregatedOrderBookLevel> levels)
         {
             var exchangeVolumes = new Dictionary<string, ExchangeVolume>();
 
@@ -62,10 +62,12 @@ namespace Lykke.Service.SmartOrderRouter.Domain.Entities.OrderBooks
             
             decimal remainingVolume = volume - totalActiveVolume;
 
-            foreach (AggregatedOrderBookLevel level in levels)
+            int index = 0;
+            
+            while (remainingVolume > 0 && index < levels.Count)
             {
                 IEnumerable<AggregatedOrderBookVolume> orderBookVolumes =
-                    level.ExchangeVolumes.OrderByDescending(o => o.Volume);
+                    levels[index++].ExchangeVolumes.OrderByDescending(o => o.Volume);
 
                 foreach (AggregatedOrderBookVolume orderBookVolume in orderBookVolumes)
                 {
@@ -113,9 +115,6 @@ namespace Lykke.Service.SmartOrderRouter.Domain.Entities.OrderBooks
                     if (remainingVolume <= 0)
                         break;
                 }
-
-                if (remainingVolume <= 0)
-                    break;
             }
 
             return exchangeVolumes.Values.ToList();
