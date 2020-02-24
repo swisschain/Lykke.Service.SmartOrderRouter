@@ -5,13 +5,14 @@
     <Authors>Lykke</Authors>
     <Company>Lykke</Company>
     <Product>Lykke.Service.SmartOrderRouter</Product>
-    <Description>Client for Lykke.Service.SmartOrderRouter API</Description>
-    <PackageLicenseUrl>https://github.com/LykkeCity/Lykke.Service.SmartOrderRouter/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/LykkeCity/Lykke.Service.SmartOrderRouter</PackageProjectUrl>
+    <PackageId>Swisschain.Service.SmartOrderRouter</PackageId>
+    <Description>Client for Swisschain.Service.SmartOrderRouter API</Description>
+    <PackageLicenseUrl>https://github.com/SC-Poc/Lykke.Service.SmartOrderRouter/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/SC-Poc/Lykke.Service.SmartOrderRouter</PackageProjectUrl>
     <PackageIconUrl>https://avatars3.githubusercontent.com/u/14153330?v=3&amp;s=200</PackageIconUrl>
-    <RepositoryUrl>https://github.com/LykkeCity/Lykke.Service.SmartOrderRouter.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/SC-Poc/Lykke.Service.SmartOrderRouter.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>Lykke</PackageTags>
+    <PackageTags>Swisschain</PackageTags>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>

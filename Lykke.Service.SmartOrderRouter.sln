@@ -8,10 +8,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0. Solution items", "0. Sol
 		.gitignore = .gitignore
 		LICENSE = LICENSE
 		README.md = README.md
-		settings.yaml = settings.yaml
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
-		CODEOWNERS = CODEOWNERS
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Domain", "1. Domain", "{CC2067D7-1971-47BB-B491-5649EA3C18B2}"
@@ -43,6 +41,15 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Service.SmartOrderRouter.DomainServices.Tests", "tests\Lykke.Service.SmartOrderRouter.DomainServices.Tests\Lykke.Service.SmartOrderRouter.DomainServices.Tests.csproj", "{9012BE6E-DF78-4F53-B434-7F490FD0E8CA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Service.SmartOrderRouter.Domain.Tests", "tests\Lykke.Service.SmartOrderRouter.Domain.Tests\Lykke.Service.SmartOrderRouter.Domain.Tests.csproj", "{CA7585C7-0260-4020-8806-5DC986AD7CE2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{2292976B-C1A6-43C4-8F0E-EFB7A8C5D10B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{F15CF2AF-C396-4285-A63B-F05242614AB5}"
+ProjectSection(SolutionItems) = preProject
+	.github\workflows\CreateServiceDocker.yml = .github\workflows\CreateServiceDocker.yml
+	.github\workflows\DeployNugetClient.yml = .github\workflows\DeployNugetClient.yml
+	.github\workflows\ValidateCommit.yml = .github\workflows\ValidateCommit.yml
+EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -104,6 +111,7 @@ Global
 		{2E9ABA3B-CA19-4408-BF7E-2946E40AB1B8} = {8F9036B1-5106-4C69-B2D2-B78EE52687A0}
 		{9012BE6E-DF78-4F53-B434-7F490FD0E8CA} = {8F9036B1-5106-4C69-B2D2-B78EE52687A0}
 		{CA7585C7-0260-4020-8806-5DC986AD7CE2} = {8F9036B1-5106-4C69-B2D2-B78EE52687A0}
+		{F15CF2AF-C396-4285-A63B-F05242614AB5} = {2292976B-C1A6-43C4-8F0E-EFB7A8C5D10B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EB6C0EF4-AA6A-444D-8603-3669F73A58BC}
